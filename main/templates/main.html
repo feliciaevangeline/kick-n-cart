@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Football Shop</title>
+</head>
+<body>
+    <h1>Kick n' Cart</h1>
+
+    <h4>NPM:</h4>
+    <p>{{ npm }}</p>
+
+    <h4>Name:</h4>
+    <p>{{ name }}</p>
+
+    <h4>Class:</h4>
+    <p>{{ class }}</p>
+
+    <hr>
+
+    <h2>Daftar Produk</h2>
+    <ul>
+        {% for product in products %}
+            <li>
+                <h3>{{ product.name }}</h3>
+                <p>Harga: {{ product.price }}</p>
+                <p>Kategori: {{ product.category }}</p>
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" width="100">
+            </li>
+        {% empty %}
+            <li>Tidak ada produk</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
