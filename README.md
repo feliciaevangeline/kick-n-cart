@@ -113,3 +113,11 @@ Selain itu, bagian migrasi database juga cukup jelas. Tutorial menjelaskan alur 
 Kemudian, bagian template juga sangat membantu. Dari tutorial, saya belajar bagaimana cara menampilkan variabel yang dikirimkan dari view ke dalam HTML, serta bagaimana menuliskan perulangan dengan sintaks template Django. Konsep ini sangat penting karena pada tugas saya, saya harus menampilkan variabel identitas (NPM, nama, kelas) serta daftar produk dari database.
 
 Secara keseluruhan, menurut saya Tutorial 1 sudah bagus sebagai pengantar. Materinya cukup lengkap untuk mahasiswa yang baru pertama kali menggunakan Django, dan contoh yang diberikan relevan dengan kebutuhan tugas. Dengan mengikuti alur di tutorial, saya bisa menyelesaikan tugas dengan lebih terstruktur dan memahami keterkaitan antara model, view, template, dan URL routing.
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+REFERENSI
+- PBP Tutorial 0
+- PBP Tutorial 1
+- Django documentation
+- YouTube channel Marcellinus Yoseph
