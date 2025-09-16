@@ -121,3 +121,50 @@ REFERENSI
 - PBP Tutorial 1
 - Django documentation
 - YouTube channel Marcellinus Yoseph
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+=============== TUGAS 3 ===============
+1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+Jawaban : 
+Data delivery diperlukan karena sebuah platform hampir selalu melibatkan pertukaran informasi antara server dan pengguna. Server menyimpan serta mengolah data, sementara pengguna mengakses data tersebut melalui aplikasi web atau mobile. Tanpa adanya mekanisme pengiriman data, informasi yang ada di server tidak akan bisa sampai ke pengguna, dan masukan dari pengguna juga tidak bisa dikirim kembali ke server. Dengan kata lain, data delivery menjadi penghubung utama yang membuat platform bisa berfungsi secara interaktif.
+
+Selain itu, data delivery juga membantu agar pertukaran data berjalan teratur dengan format standar seperti JSON atau XML. Dengan adanya format ini, data yang dikirim lebih mudah dibaca, diproses, dan ditampilkan oleh aplikasi, bahkan bisa digunakan kembali oleh sistem lain. Mekanisme ini juga memungkinkan platform menampilkan data secara real-time, terhubung dengan layanan eksternal, dan lebih mudah dikembangkan. Jadi, data delivery bisa dianggap sebagai fondasi penting agar platform tidak hanya berjalan secara lokal, tetapi juga bisa berinteraksi dengan pengguna maupun sistem lain secara luas.
+
+2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+Jawaban :
+Menurut saya, JSON lebih baik dibandingkan XML karena formatnya jauh lebih sederhana dan mudah dipahami. JSON hanya menggunakan struktur key-value yang ringkas, sehingga data lebih cepat diproses dan tidak banyak memakan ruang. Berbeda dengan XML yang penuh dengan tag pembuka dan penutup, sehingga terasa lebih ribet ketika dibaca maupun digunakan.
+
+Saya juga melihat JSON lebih populer karena lebih sesuai dengan kebutuhan aplikasi web dan mobile saat ini. Hampir semua framework modern mendukung JSON secara langsung, terutama karena JSON sangat erat kaitannya dengan JavaScript. Hal ini membuat pengembangan aplikasi jadi lebih praktis dan efisien. Walaupun XML masih ada manfaatnya, terutama di sistem lama atau yang butuh validasi ketat, saya pribadi lebih memilih JSON karena lebih ringan, cepat, dan sesuai dengan tren teknologi saat ini.
+
+3. Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+Jawaban :
+Method is_valid() pada form Django dipakai untuk mengecek apakah data yang dimasukkan lewat form sudah sesuai dengan aturan yang berlaku. Misalnya, sistem akan memeriksa apakah nilai harga berupa angka, apakah kolom nama produk tidak kosong, atau apakah URL yang dimasukkan berbentuk link yang valid. Kalau semua syarat sudah terpenuhi, maka is_valid() akan mengembalikan nilai benar, sedangkan jika ada data yang salah, form akan dianggap tidak valid dan error bisa langsung ditampilkan ke pengguna.
+
+Penggunaan method ini penting supaya data yang tersimpan di database tetap rapi dan konsisten. Tanpa adanya validasi ini, data yang salah atau tidak sesuai bisa saja tersimpan, misalnya stok bernilai negatif atau link gambar yang tidak bisa dibuka. Hal seperti ini bisa merusak sistem dan bikin data jadi kacau. Dengan adanya is_valid(), proses validasi jadi lebih praktis karena Django sudah otomatis melakukan pengecekan tanpa perlu menulis kode tambahan untuk setiap field.
+
+4.  Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+Jawaban :
+CSRF token dibutuhkan pada form di Django untuk mencegah serangan Cross-Site Request Forgery (CSRF). Token ini berfungsi sebagai kode unik yang diberikan pada setiap form dan akan divalidasi oleh server ketika form dikirim. Dengan adanya token tersebut, server dapat memastikan bahwa permintaan benar-benar berasal dari pengguna yang sah melalui aplikasi, bukan dari sumber eksternal yang berusaha menyamar.
+
+Apabila CSRF token tidak digunakan, aplikasi menjadi rentan terhadap manipulasi request. Penyerang dapat membuat halaman berbahaya yang secara diam-diam mengirimkan permintaan ke server dengan identitas pengguna tanpa sepengetahuannya, misalnya mengubah data, menghapus informasi, atau melakukan transaksi. Kondisi ini dapat dimanfaatkan untuk merugikan pengguna maupun merusak integritas aplikasi.
+
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+Jawaban :
+Berdasarkan checklist yang diberikan, langkah pertama yang saya lakukan adalah membuat skeleton menggunakan base.html agar halaman-halaman lain dapat menggunakan kerangka yang sama. Setelah itu, saya menambahkan form melalui forms.py menggunakan ModelForm yang terhubung ke model Product, sehingga proses input data produk bisa dilakukan lebih mudah. Pada tahap berikutnya, saya membuat beberapa fungsi views, seperti show_main untuk menampilkan daftar produk, create_product untuk menambahkan produk baru, serta show_product untuk menampilkan detail produk tertentu. Saya juga menambahkan views tambahan untuk kebutuhan data delivery, yaitu show_json, show_xml, show_json_by_id, dan show_xml_by_id yang dibuat dengan memanfaatkan serializers untuk mengubah data model menjadi format JSON dan XML.
+
+Langkah selanjutnya adalah membuat routing pada urls.py agar semua views tersebut dapat diakses melalui endpoint tertentu. Untuk bagian template, saya menambahkan main.html sebagai halaman utama yang berisi daftar produk dengan tombol “Add” dan “Detail”, lalu membuat create_product.html sebagai halaman input produk baru, serta product_detail.html untuk menampilkan detail produk. Setelah semuanya selesai, saya mencoba mengakses data dari endpoint JSON dan XML menggunakan Postman untuk memastikan data dapat ditampilkan dengan benar. Dalam proses ini, saya tidak hanya mengikuti tutorial secara mentah-mentah, tetapi juga menyesuaikan dengan kebutuhan tugas, sehingga dapat memahami fungsi setiap bagian dan alur implementasinya.
+
+6. Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?
+Jawaban :
+Menurut saya, tutorial 2 sudah sangat jelas dan membantu dalam memahami konsep dasar pembuatan aplikasi Django. Penjelasan yang diberikan membuat langkah-langkah mudah diikuti, sehingga proses belajar terasa lebih terarah. Dari materi yang sudah dijelaskan di tutorial, saya jadi lebih terbantu untuk mengerjakan tugas 3 karena sudah memiliki gambaran alur pengerjaan yang sesuai.
+
+7. Mengakses keempat URL di poin 2 menggunakan Postman, membuat screenshot dari hasil akses URL pada Postman, dan menambahkannya ke dalam README.md.
+Jawaban :
+ristek.link/postman-t3
+
+Referensi : 
+- website GeeksforGeeks
+- tutorial 2 PBP
+- website Telkom Universiy
+- website Coding Studio
