@@ -27,12 +27,7 @@ SECRET_KEY = 'django-insecure-8aeosm4q+18v63xlv6n15diznb9&w=s549jg#7idl!0aoj656o
 
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 # SECURITY WARNING: don't run with debug turned on in production!
-<<<<<<< HEAD
 DEBUG = True
-=======
-DEBUG = False
->>>>>>> edda9d5fcb86c9cf7acad07be6a4c4f01b8d5b47
-
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "felicia-evangeline-kickncart.pbp.cs.ui.ac.id"]
 
 
@@ -63,12 +58,7 @@ ROOT_URLCONF = 'kick_n_cart.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-<<<<<<< HEAD
-        'DIRS': [BASE_DIR / 'templates'],
-=======
-        'DIRS': [],
->>>>>>> edda9d5fcb86c9cf7acad07be6a4c4f01b8d5b47
-        'APP_DIRS': True,
+        'DIRS': [BASE_DIR / 'templates'],'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',

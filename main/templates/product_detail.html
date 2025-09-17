@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-<<<<<<< HEAD
 {% block content %}
 <p>
   <a href="{% url 'main:show_main' %}">
@@ -24,23 +23,3 @@
 <p><b>Deskripsi:</b></p>
 <p>{{ product.description }}</p>
 {% endblock content %}
-=======
-
-{% block content %}
-<p><a href="{% url 'main:show_main' %}"><button>← Back to Products</button></a></p>
-
-<h1>{{ product.name }}</h1>
-<p>Harga: {{ product.price }}</p>
-<p>Kategori: {{ product.category }}</p>
-<p>Brand: {{ product.brand }}</p>
-<p>Stok: {{ product.stock }}</p>
-{% if product.thumbnail %}
-    <img src="{{ product.thumbnail }}" alt="{{ product.name }}" width="200">
-{% endif %}
-<p>{{ product.description }}</p>
-
-{% if product.is_featured %}
-<p><b>Featured Product</b></p>
-{% endif %}
-{% endblock %}
->>>>>>> edda9d5fcb86c9cf7acad07be6a4c4f01b8d5b47
