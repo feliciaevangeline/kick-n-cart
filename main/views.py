@@ -26,9 +26,13 @@ def create_product(request):
 
 def show_product(request, id):
     product = get_object_or_404(Product, pk=id)
+<<<<<<< HEAD
     context = {
         'product': product
         }
+=======
+    context = {'product': product}
+>>>>>>> edda9d5fcb86c9cf7acad07be6a4c4f01b8d5b47
     return render(request, "product_detail.html", context)
 
 # API JSON
