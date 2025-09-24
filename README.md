@@ -166,5 +166,40 @@ ristek.link/postman-t3
 Referensi : 
 - website GeeksforGeeks
 - tutorial 2 PBP
-- website Telkom Universiy
+- website Telkom University
 - website Coding Studio
+
+=============== TUGAS 4 ===============
+1. Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
+Jawaban :
+Django AuthenticationForm adalah sebuah form bawaan yang disediakan oleh Django untuk menangani proses autentikasi pengguna ketika login. Form ini sudah terintegrasi dengan sistem autentikasi Django sehingga mampu memvalidasi input username dan password berdasarkan data yang tersimpan di database. AuthenticationForm juga sudah memiliki mekanisme validasi error apabila pengguna salah memasukkan data. Kelebihan dari AuthenticationForm adalah praktis karena tidak perlu membuat form autentikasi dari awal, aman karena sudah mengikuti standar keamanan Django, serta efisien untuk implementasi cepat. Namun, AuthenticationForm memiliki kekurangan dari sisi fleksibilitas, karena jika pengembang membutuhkan tampilan login yang lebih kompleks atau ingin menambahkan field khusus, maka diperlukan penyesuaian tambahan. AuthenticationForm lebih sering dipakai sebagai dasar yang kemudian dimodifikasi sesuai kebutuhan proyek.
+
+2. Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
+Jawaban :
+Autentikasi dan otorisasi merupakan dua yang konsep berbeda dalam sistem keamanan aplikasi web. Autentikasi adalah proses untuk memverifikasi identitas pengguna, yaitu memastikan bahwa username dan password yang dimasukkan benar-benar milik pengguna yang terdaftar. Sedangkan otorisasi adalah tahap setelah autentikasi, yaitu menentukan hak akses atau izin apa saja yang dimiliki pengguna tersebut. Contohnya, setelah seorang admin berhasil login (autentikasi), sistem akan memberi izin tambahan untuk mengakses dashboard admin (otorisasi). Django mengimplementasikan autentikasi melalui sistem login bawaan dengan form seperti AuthenticationForm dan fungsi authenticate(). Sementara itu, otorisasi diimplementasikan melalui sistem permission, group, dan decorator seperti @login_required atau @permission_required, yang memungkinkan developer mengatur akses pada view atau model tertentu. 
+
+3. Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+Jawaban :
+Session dan cookies sama-sama digunakan untuk menyimpan informasi state di aplikasi web yang sifatnya stateless, tetapi mekanismenya berbeda. Cookies menyimpan data langsung di browser pengguna dalam bentuk file kecil, sehingga server tidak perlu menyimpan banyak informasi. Kelebihan cookies adalah ringan bagi server dan dapat digunakan untuk kebutuhan sederhana seperti menyimpan preferensi tampilan. Kekurangannya adalah rentan terhadap serangan karena data berada di sisi klien. Sementara itu, session menyimpan data di server, sedangkan browser hanya menyimpan ID session untuk menghubungkannya. Kelebihan session adalah lebih aman karena data sensitif tidak langsung disimpan di browser, namun kekurangannya adalah dapat membebani server ketika jumlah pengguna semakin banyak.
+
+4. Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
+Jawaban :
+Penggunaan cookies secara default tidak sepenuhnya aman karena ada potensi risiko seperti pencurian data melalui serangan XSS (Cross-Site Scripting) maupun CSRF (Cross-Site Request Forgery). Cookies juga bisa disalahgunakan apabila berisi informasi sensitif tanpa enkripsi yang memadai. Oleh karena itu, dalam pengembangan web modern, cookies biasanya dibekali dengan konfigurasi tambahan agar lebih aman. Django menangani hal ini dengan menyediakan proteksi bawaan, misalnya dengan atribut HttpOnly yang mencegah cookies diakses melalui JavaScript, atribut Secure agar cookies hanya dikirim melalui koneksi HTTPS, serta penggunaan csrf_token untuk melindungi form dari serangan CSRF. Django termasuk framework yang memiliki sistem keamanan cookies cukup ketat secara default, namun pengembang tetap disarankan untuk memahami risikonya agar tidak salah konfigurasi.
+
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+Jawaban :
+Saya mulai mengerjakan checklist pertama dengan menambahkan fungsi registrasi, login, dan logout. Untuk registrasi, saya menggunakan UserCreationForm dari Django yang sudah menyediakan validasi bawaan untuk username dan password. Form ini kemudian saya sambungkan ke sebuah view register yang berfungsi menyimpan data pengguna baru ketika form di-submit. Selanjutnya, saya membuat template register.html agar pengguna dapat melakukan registrasi melalui antarmuka web.
+
+Langkah berikutnya adalah membuat fungsi login dengan memanfaatkan AuthenticationForm. Fungsi ini saya letakkan dalam view login_user, yang tidak hanya melakukan autentikasi data pengguna tetapi juga menyimpan informasi last_login ke dalam cookies menggunakan response.set_cookie. Data ini nantinya ditampilkan di halaman utama agar pengguna dapat melihat kapan terakhir kali mereka login. Setelah login berhasil, pengguna diarahkan kembali ke halaman utama aplikasi.
+
+Untuk fungsi logout, saya menambahkan view logout_user yang memanfaatkan fungsi logout bawaan Django. Fungsi ini akan menghapus session pengguna, sehingga status login berakhir. 
+
+Setelah itu, saya menyesuaikan halaman utama (main.html) agar menampilkan detail informasi pengguna yang sedang login. Informasi yang saya tampilkan meliputi username (request.user.username) dan data last_login yang diambil dari cookies. Saya juga menambahkan tombol filter seperti All Products dan My Products. Tombol ini membantu membedakan apakah produk yang ditampilkan adalah milik semua pengguna atau hanya produk milik akun yang sedang login.
+
+Terakhir, saya melakukan pengujian dengan login menggunakan masing-masing akun. Saya menambahkan tiga produk untuk setiap akun dengan kategori berbeda (Sepatu, Bola, Jersey, dan Aksesoris). Hasilnya, di halaman All Products muncul seluruh data produk dari semua pengguna, sedangkan di halaman My Products hanya tampil produk yang sesuai dengan akun yang sedang login. Dengan cara ini, semua checklist terpenuhi mulai dari autentikasi, pembuatan dummy data, penghubungan model Product dengan User, hingga penampilan informasi login menggunakan cookies.
+
+Referensi:
+- Dokumentasi resmi Django
+- Tutorial 3 PBP
+- Website DigitalOcean – artikel tentang Understanding Sessions and Cookies in Django
+- Website W3Schools - pembahasan tentang cookies dan session

@@ -1,3 +1,4 @@
+from main.views import register, login_user, logout_user # tugas 4
 from django.urls import path
 from .views import (
     show_main,
@@ -17,4 +18,8 @@ urlpatterns = [
     path('json/<uuid:id>/', show_json_by_id, name='show_json_by_id'),
     path('xml/', show_xml, name='show_xml'),
     path('xml/<uuid:id>/', show_xml_by_id, name='show_xml_by_id'),
+    # tugas 4
+    path('register/', register, name='register'),
+    path('login/', login_user, name='login'),
+    path('logout/', logout_user, name='logout'),
 ]

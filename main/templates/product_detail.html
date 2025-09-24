@@ -22,4 +22,13 @@
 <p><b>Brand:</b> {{ product.brand }}</p>
 <p><b>Deskripsi:</b></p>
 <p>{{ product.description }}</p>
+
+<!-- tugas 4 -->
+{% if product.user %}
+    <p>Author: {{ product.user.username }}</p>
+{% else %}
+    <p>Author: Anonymous</p>
+{% endif %}
+<!-- tugas 4 -->
+
 {% endblock content %}

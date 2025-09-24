@@ -1,7 +1,9 @@
 from django.db import models
 import uuid
+from django.contrib.auth.models import User # tugas 4
 
 class Product(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) # tugas 4
     CATEGORY_CHOICES = [
         ('sepatu', 'Sepatu'),
         ('jersey', 'Jersey'),
