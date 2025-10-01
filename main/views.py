@@ -56,15 +56,23 @@ def create_product(request):
         product.save()
         return redirect('main:show_main')
 
-    context = {'form': form}
+    context = {
+        'form': form,
+        'npm': '2406437054',
+        'name': request.user.username if request.user.is_authenticated else '',
+        'class': 'PBP E'
+    }
     return render(request, "create_product.html", context)
 
 @login_required(login_url='/login') # tugas 4
 def show_product(request, id):
     product = get_object_or_404(Product, pk=id)
     context = {
-        'product': product
-        }
+        'product': product,
+        'npm': '2406437054',
+        'name': request.user.username if request.user.is_authenticated else '',
+        'class': 'PBP E'
+    }
     return render(request, "product_detail.html", context)
 
 # API JSON
