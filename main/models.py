@@ -1,9 +1,11 @@
 from django.db import models
 import uuid
-from django.contrib.auth.models import User # tugas 4
+from django.contrib.auth.models import User
+from django.utils import timezone  # untuk default timestamp
 
 class Product(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) # tugas 4
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) 
+
     CATEGORY_CHOICES = [
         ('sepatu', 'Sepatu'),
         ('jersey', 'Jersey'),
@@ -27,6 +29,9 @@ class Product(models.Model):
     # Atribut tambahan
     stock = models.PositiveIntegerField(default=0)
     brand = models.CharField(max_length=50, blank=True, null=True)
+
+    # Waktu produk dibuat
+    created_at = models.DateTimeField(default=timezone.now) 
 
     def __str__(self):
         return self.name

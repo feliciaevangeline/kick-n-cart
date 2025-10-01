@@ -1,34 +1,103 @@
 {% extends 'base.html' %}
+{% block meta %}
+<title>{{ product.name }} - Kick n' Cart</title>
+{% endblock meta %}
+
 {% block content %}
-<p>
-  <a href="{% url 'main:show_main' %}">
-    <button>← Back to Product List</button>
-  </a>
-</p>
+{% include 'navbar.html' %}
+<div class="bg-[#EBDDC5] w-full pt-20 min-h-screen">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    
+    <!-- Back Navigation -->
+    <div class="mb-6">
+      <a href="{% url 'main:show_main' %}" 
+         class="text-[#2E4365] hover:text-[#E59D2C] font-medium transition-colors">
+        ← Back to Shop
+      </a>
+    </div>
 
-<h1>{{ product.name }}</h1>
-<p>
-  <b>Kategori:</b> {{ product.category }}
-  {% if product.is_featured %} | <b>⭐ Featured Product</b>{% endif %}
-  | <i>Stok: {{ product.stock }}</i>
-</p>
+    <!-- Product Detail Layout -->
+    <article class="bg-white rounded-lg border border-gray-200 shadow-md overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2">
+        
+        <!-- Left: Product Image -->
+        <div class="p-6 sm:p-8 flex items-center justify-center">
+          {% if product.thumbnail %}
+            <img src="{{ product.thumbnail }}" 
+                 alt="{{ product.name }}" 
+                 class="w-full h-auto max-h-[500px] object-contain rounded-lg">
+          {% else %}
+            <div class="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500 rounded-lg">
+              No Image
+            </div>
+          {% endif %}
+        </div>
 
-{% if product.thumbnail %}
-  <img src="{{ product.thumbnail }}" alt="{{ product.name }}" width="300">
-  <br /><br />
-{% endif %}
+        <!-- Right: Product Info -->
+        <div class="p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <!-- Category + Featured -->
+            <div class="flex flex-wrap items-center gap-2 mb-4">
+              <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-[#2E4365] text-white">
+                {{ product.category }}
+              </span>
+              {% if product.is_featured %}
+                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-[#E59D2C] text-white">
+                  ⭐ Featured
+                </span>
+              {% endif %}
+            </div>
 
-<p><b>Harga:</b> Rp{{ product.price }}</p>
-<p><b>Brand:</b> {{ product.brand }}</p>
-<p><b>Deskripsi:</b></p>
-<p>{{ product.description }}</p>
+            <h1 class="text-3xl font-bold text-[#2E4365] mb-4">{{ product.name }}</h1>
 
-<!-- tugas 4 -->
-{% if product.user %}
-    <p>Author: {{ product.user.username }}</p>
-{% else %}
-    <p>Author: Anonymous</p>
-{% endif %}
-<!-- tugas 4 -->
+            <p class="text-lg text-gray-700 mb-2"><b>Brand:</b> {{ product.brand|default:"-" }}</p>
+            <p class="text-lg text-gray-700 mb-2"><b>Stock:</b> {{ product.stock }}</p>
+            <p class="text-lg text-gray-700 mb-2"><b>Price:</b> Rp{{ product.price }}</p>
+            <p class="text-sm text-gray-500 mb-4">
+              <b>Created at:</b> {{ product.created_at|date:"M j, Y, H:i" }}
+            </p>
 
+            <div class="text-gray-700 leading-relaxed whitespace-pre-line text-base sm:text-lg">
+              {{ product.description }}
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="mt-6 flex space-x-3">
+            {% if user.is_authenticated and product.user == user %}
+              <a href="{% url 'main:edit_product' product.id %}" 
+                 class="px-4 py-2 bg-[#2E4365] text-white rounded-md hover:bg-[#1f314a] transition">
+                Edit
+              </a>
+              <a href="{% url 'main:delete_product' product.id %}" 
+                 class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                Delete
+              </a>
+            {% else %}
+              <button class="px-4 py-2 bg-[#E59D2C] text-white rounded-md hover:bg-[#C97C1F] transition">
+                Buy Now
+              </button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Seller Info -->
+      <div class="border-t border-gray-200 p-6 sm:p-8 bg-gray-50">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-medium text-gray-900">
+              {% if product.user %}
+                <p>Seller: {{ product.user.username }}</p>
+              {% else %}
+                <p>Seller: Unknown</p>
+              {% endif %}
+            </div>
+            <p class="text-sm text-gray-500">Seller Information</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
 {% endblock content %}

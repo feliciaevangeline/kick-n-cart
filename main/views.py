@@ -1,3 +1,4 @@
+# tugas 3
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ProductForm
 from .models import Product
@@ -12,6 +13,7 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+# tugas 3
 # @login_required(login_url='/login')
 # def show_main(request):
 #     products = Product.objects.all()
@@ -43,18 +45,6 @@ def show_main(request):
         'last_login': request.COOKIES.get('last_login', 'Never')
     }
     return render(request, "main.html", context)
-
-# tugas 4
-# @login_required(login_url='/login')
-# def create_product(request):
-#     form = ProductForm(request.POST or None)
-    
-#     if request.method == "POST" and form.is_valid():
-#         form.save()
-#         return redirect('main:show_main')
-    
-#     context = {'form': form}
-#     return render(request, "create_product.html", context)
 
 # tugas 4
 @login_required(login_url='/login')
@@ -132,7 +122,7 @@ def login_user(request):
             return response
 
    else:
-      form = AuthenticationForm(request)
+    form = AuthenticationForm(request)
    context = {'form': form}
    return render(request, 'login.html', context)
 
@@ -142,3 +132,24 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
     
+
+# tugas 5
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=product)
+
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
+
+    context = {
+        'form': form,
+        'product': product
+    }
+
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))

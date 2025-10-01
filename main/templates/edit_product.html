@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block meta %}
-<title>Create Product - Kick n' Cart</title>
+<title>Edit Product - Kick n' Cart</title>
 {% endblock meta %}
 
 {% block content %}
@@ -19,8 +19,8 @@
     <!-- Form -->
     <div class="bg-white rounded-lg border border-gray-200 p-6 sm:p-8 form-style shadow-md">
       <div class="mb-8 text-center">
-        <h1 class="text-3xl font-bold text-[#2E4365] mb-2">Add New Product</h1>
-        <p class="text-gray-600">Fill in the details to add your product</p>
+        <h1 class="text-3xl font-bold text-[#2E4365] mb-2">Edit Product</h1>
+        <p class="text-gray-600">Update your product details</p>
       </div>
       
       <form method="POST" enctype="multipart/form-data" class="space-y-6">
@@ -52,14 +52,14 @@
             Cancel
           </a>
           <button type="submit" 
-                  class="order-1 sm:order-2 flex-1 bg-[#E59D2C] text-white 
+                  class="order-1 sm:order-2 flex-1 bg-[#2E4365] text-white 
                          px-6 py-3 rounded-md font-medium 
-                         hover:bg-[#C97C1F] transition-colors">
-            Save Product
+                         hover:bg-[#1f314a] transition-colors">
+            Update Product
           </button>
         </div>
       </form>
     </div>
   </div>
 </div>
-{% endblock content %}
+{% endblock %}

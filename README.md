@@ -203,3 +203,60 @@ Referensi:
 - Tutorial 3 PBP
 - Website DigitalOcean – artikel tentang Understanding Sessions and Cookies in Django
 - Website W3Schools - pembahasan tentang cookies dan session
+
+=============== TUGAS 5 ===============
+1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+Jawaban :
+CSS memiliki aturan urutan prioritas yang disebut specificity. Urutan ini menentukan style mana yang “menang” jika ada konflik. Level paling rendah adalah selector elemen, misalnya div, p, atau h1, karena aturan ini biasanya berlaku umum. Selanjutnya ada class selector (misalnya .btn atau .container) yang lebih spesifik. Di atasnya lagi ada id selector seperti #navbar, yang sifatnya unik karena tiap halaman idealnya hanya punya satu id tertentu. Lebih tinggi dari semua itu adalah inline style, yaitu style yang langsung ditulis di atribut elemen HTML (misal, <p style="color:red">). Inline hampir selalu menang melawan selector lain. Namun, ada juga !important yang bisa memaksa satu aturan CSS untuk mengalahkan semua aturan lain meskipun specificity-nya lebih rendah.
+
+Contoh, misal ada sebuah tombol dengan class .btn, id #submit, dan juga diberi inline style. Jika kita menulis .btn { color: blue; }, lalu menambahkan #submit { color: green; }, dan akhirnya menulis <button id="submit" class="btn" style="color: red;">Submit</button>, maka warna teks tombol akan menjadi merah karena inline style menang. Tapi jika di CSS ada aturan .btn { color: blue !important; }, maka warna biru akan tetap dipakai walaupun ada inline style.
+
+
+2. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+Jawaban :
+Responsive design adalah konsep agar tampilan website bisa otomatis menyesuaikan diri dengan ukuran layar pengguna. Hal ini sangat penting karena perangkat yang dipakai untuk membuka website sangat beragam, mulai dari laptop, tablet, hingga smartphone. Tanpa responsive design, tampilan website bisa kacau, misalnya teks terlalu kecil untuk dibaca di HP, gambar keluar dari layar, atau tombol sulit ditekan. Dengan responsive design, tata letak bisa berubah secara fleksibel agar tetap nyaman dipakai di semua perangkat.
+
+Contohnya, website Instagram Web yang sudah menerapkan responsive design. Jika dibuka di laptop, tampilannya penuh dengan sidebar, feed, dan bagian explore. Tapi kalau dibuka di smartphone, layout-nya lebih ringkas, sidebar hilang, dan tombol-tombol dibuat lebih besar agar mudah ditekan dengan jari.
+
+3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+Jawaban :
+Dalam CSS ada istilah box model, yaitu cara browser menggambarkan setiap elemen di halaman. Box model ini terdiri dari konten, padding, border, dan margin. Padding adalah ruang di dalam elemen, yaitu jarak antara konten dan border. Misalnya pada tombol, padding akan membuat teks di dalam tombol tidak mepet ke tepi, tapi punya jarak sehingga tombol lebih “lega”. Border adalah garis yang membungkus elemen, bisa diatur warnanya, ketebalannya, bahkan stylenya (solid, dashed, dotted). Sementara margin adalah jarak di luar elemen, yang memisahkan satu elemen dengan elemen lain di sekitarnya.
+
+Contoh penggunaannya, jika kita membuat <button>Click</button> lalu menambahkan CSS padding: 10px; border: 2px solid black; margin: 20px;, maka teks tombol akan memiliki jarak 10px dari tepi tombol, tombol punya garis hitam setebal 2px, dan tombol tersebut akan berjarak 20px dari elemen lain di sekitarnya.
+
+4. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+Jawaban :
+Flexbox dan Grid adalah dua metode layout modern dalam CSS yang membantu mengatur posisi elemen di halaman. Flexbox dirancang untuk layout satu dimensi, artinya lebih cocok ketika kita hanya ingin mengatur elemen dalam baris (row) atau kolom (column). Dengan flexbox, kita bisa mengatur apakah elemen-elemen rata kiri, kanan, tengah, atau bahkan memiliki jarak sama rata dengan justify-content: space-between. Kita juga bisa mengatur vertical alignment dengan align-items.
+
+Berbeda dengan flexbox, Grid lebih cocok untuk layout dua dimensi, yaitu ketika kita ingin mengatur baris dan kolom sekaligus. Misalnya, kita bisa membuat halaman yang terdiri dari header di atas, sidebar di kiri, konten utama di tengah, dan footer di bawah hanya dengan beberapa baris kode CSS Grid. Dengan properti grid-template-columns dan grid-template-rows, kita bisa menentukan ukuran setiap bagian dengan sangat fleksibel.
+
+Sebagai contoh nyata, e-commerce seperti Tokopedia atau Shopee biasanya menggunakan grid untuk menampilkan produk dalam bentuk kotak-kotak yang sejajar, tapi di dalam setiap kotak produknya bisa menggunakan flexbox untuk mengatur isi seperti gambar, nama produk, harga, dan tombol beli. Jadi keduanya sebenarnya saling melengkapi, grid untuk struktur besar, flexbox untuk detail kecil di dalam struktur tersebut.
+
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+Jawaban :
+Langkah pertama yang saya lakukan adalah menambahkan Tailwind CSS sebagai framework utama styling. Hal ini dilakukan dengan menambahkan script CDN Tailwind pada file base.html di dalam folder templates. Selain itu, saya juga menambahkan tag <meta name="viewport"> agar halaman web bisa lebih responsif pada berbagai perangkat, terutama mobile. Dengan Tailwind, saya lebih mudah mengatur layout, warna, spacing, dan tampilan komponen tanpa harus menulis CSS manual terlalu banyak.
+
+Setelah itu, saya mengerjakan bagian CRUD product, khususnya fungsi edit dan delete. Pada file views.py, saya membuat fungsi edit_product yang menerima parameter id produk. Fungsi ini menggunakan instance produk yang sudah ada untuk diisi ke dalam form sehingga pengguna dapat melakukan perubahan data. Jika form valid, perubahan langsung disimpan ke database.
+
+Untuk delete product, saya menambahkan fungsi delete_product yang mengambil produk berdasarkan id lalu menghapusnya dari database. Kedua fungsi ini kemudian saya daftarkan di urls.py agar bisa diakses melalui tombol yang ada pada setiap card product maupun halaman detail. Dengan begitu, pengguna bisa lebih mudah mengelola produk langsung dari daftar produk maupun dari halaman detail.
+
+Setelah fungsi CRUD selesai, saya membuat file navbar.html untuk menambahkan navigation bar yang konsisten di setiap halaman aplikasi. Navbar ini saya buat responsif menggunakan Tailwind. Pada tampilan desktop, navbar menampilkan menu utama secara penuh, sementara pada tampilan mobile saya menambahkan tombol hamburger untuk membuka menu. Warna dasar navbar saya gunakan police blue, dipadukan dengan teks dan tombol berwarna terang (marigold, putih, merah) agar kontras dan sesuai dengan tema olahraga. Navbar ini saya hubungkan ke semua halaman dengan {% include 'navbar.html' %}.
+
+Selanjutnya, agar styling dan file tambahan bisa digunakan secara konsisten, saya mengatur konfigurasi static files di settings.py. Saya menambahkan middleware WhiteNoise agar file statis dapat disajikan dengan baik saat aplikasi dijalankan dalam mode produksi. Selain itu, saya juga memastikan bahwa folder /static dapat digunakan untuk menyimpan file CSS tambahan, gambar, dan asset lain. Pada file base.html, saya menautkan file global.css dari folder static agar bisa dipakai di seluruh template.
+
+Bagian terakhir yang saya lakukan adalah melakukan styling pada halaman-halaman utama aplikasi. Saya mulai dari halaman login dan register dengan memberikan border, padding, dan highlight ketika input difokuskan. Kemudian pada halaman create product dan edit product, saya menambahkan layout form yang lebih rapi dengan tombol aksi yang dibedakan warnanya.
+
+Untuk halaman product detail, saya menata ulang layout agar gambar produk berada di sebelah kiri, sedangkan informasi produk (nama, brand, harga, stok, tanggal dibuat, dan deskripsi) berada di sebelah kanan. Hal ini membuat tampilan lebih profesional dan mudah dibaca. Saya juga menambahkan informasi brand dan created at yang sebelumnya belum ditampilkan.
+
+Terakhir, pada halaman daftar produk, saya menambahkan kondisi agar jika belum ada produk maka ditampilkan ilustrasi gambar no-product.png dengan pesan bahwa produk masih kosong. Jika produk sudah ada, setiap produk ditampilkan dalam bentuk card dengan desain grid. Pada setiap card terdapat tombol Edit dan Delete agar pengguna dapat langsung mengelola produk. Judul produk juga bisa diklik untuk menuju halaman detail produk.
+
+Secara keseluruhan, saya mengikuti struktur besar dari tutorial, namun saya menyesuaikannya dengan tema aplikasi yang saya kerjakan. Dengan begitu, hasil akhir aplikasi saya tetap memenuhi checklist tugas, tetapi tetap memiliki gaya visual dan identitas sendiri yang berbeda dari contoh tutorial.
+
+referensi:
+- Tutorial 4 PBP
+- EasyCoding.id – artikel Urutan Prioritas Selector CSS (Specificity): Panduan Lengkap untuk Memahami dan Menggunakan (https://www.easycoding.id/blog/urutan-prioritas-selector-css-specificity-panduan-lengkap-untuk-memahami-dan-menggunakan)
+- W3Schools – Responsive Web Design (https://www.w3schools.com/html/html_responsive.asp)
+- W3Schools – CSS Box Model (https://www.w3schools.com/css/css_boxmodel.asp)
+- W3Schools – CSS Flexbox (https://www.w3schools.com/css/css3_flexbox.asp)
+- CSS-Tricks – A Complete Guide to Flexbox (https://css-tricks.com/snippets/css/a-guide-to-flexbox/)
+- Tailwind CSS v1 – Flexbox & Grid Components (https://v1.tailwindcss.com/components/flexbox-grids)

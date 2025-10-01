@@ -1,4 +1,5 @@
 from main.views import register, login_user, logout_user # tugas 4
+from main.views import edit_product, delete_product # tugas 5
 from django.urls import path
 from .views import (
     show_main,
@@ -22,4 +23,7 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
+    # tugas 5
+    path('news/<uuid:id>/edit', edit_product, name='edit_product'),
+    path('news/<uuid:id>/delete', delete_product, name='delete_product'),
 ]
