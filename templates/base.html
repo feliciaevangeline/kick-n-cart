@@ -5,13 +5,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   {% block meta %}{% endblock meta %}
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- DOMPurify (untuk keamanan konten HTML di JS) -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+
+  <!-- Global CSS -->
   <link rel="stylesheet" href="{% static 'css/global.css' %}">
 </head>
-<body class="bg-[#EBDDC5]">
+<body class="bg-[#EBDDC5] min-h-screen flex flex-col">
+
+  <!-- Navbar -->
   {% include 'navbar.html' %}
-  <main class="pt-20">
+
+  <!-- Main Content -->
+  <main class="flex-1 pt-20">
     {% block content %}{% endblock content %}
   </main>
+
+  <!-- Toast Notification -->
+  {% include 'toast.html' %}
+
+  <!-- Modal (Add Product, dll) -->
+  {% include 'modal.html' %}
+
+  <!-- Auto Trigger Toast dari Django messages -->
+  {% if messages %}
+  <script>
+    {% for message in messages %}
+      showToast("{{ message.tags|title }}", "{{ message|escapejs }}", "{{ message.tags }}");
+    {% endfor %}
+  </script>
+  {% endif %}
+
 </body>
 </html>

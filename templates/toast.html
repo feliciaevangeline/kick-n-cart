@@ -1,0 +1,53 @@
+<div id="toast-component"
+  class="fixed bottom-6 right-6 z-50 max-w-sm w-full transform transition-all duration-300 ease-in-out opacity-0 scale-90 border-l-4 border-[#2E4365] bg-white shadow-lg rounded-xl p-4 flex items-start space-x-3">
+
+  <div id="toast-icon" class="text-2xl">ℹ️</div>
+
+  <div class="flex-1">
+    <p id="toast-title" class="font-semibold text-[#2E4365]">Info</p>
+    <p id="toast-message" class="text-gray-700 text-sm"></p>
+  </div>
+</div>
+
+<script>
+function showToast(title, message, type = 'info', duration = 3000) {
+  const toast = document.getElementById('toast-component');
+  const titleElem = document.getElementById('toast-title');
+  const messageElem = document.getElementById('toast-message');
+  const iconElem = document.getElementById('toast-icon');
+
+  if (!toast) return;
+
+  // Reset style
+  toast.classList.remove(
+    'border-green-600', 'border-red-600', 'border-[#2E4365]',
+    'bg-green-50', 'bg-red-50', 'bg-[#EBDDC5]'
+  );
+
+  let icon = '';
+  if (type === 'success') {
+    toast.classList.add('bg-green-50', 'border-green-600');
+    icon = '✅';
+  } else if (type === 'error') {
+    toast.classList.add('bg-red-50', 'border-red-600');
+    icon = '❌';
+  } else {
+    toast.classList.add('bg-[#EBDDC5]', 'border-[#2E4365]');
+    icon = 'ℹ️';
+  }
+
+  // Isi konten
+  titleElem.textContent = title;
+  messageElem.textContent = message;
+  iconElem.textContent = icon;
+
+  toast.classList.remove('opacity-0', 'scale-90');
+  toast.classList.add('opacity-100', 'scale-100');
+
+  // Hilang otomatis
+  setTimeout(() => {
+    toast.classList.remove('opacity-100', 'scale-100');
+    toast.classList.add('opacity-0', 'scale-90');
+  }, duration);
+}
+</script>
