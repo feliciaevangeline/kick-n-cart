@@ -58,45 +58,45 @@ def create_product(request):
 # ======================
 # AJAX ADD PRODUCT
 # ======================
-@login_required(login_url="/login")
+@login_required
 @require_POST
 def add_product_entry_ajax(request):
-    if not request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return JsonResponse({"error": "Invalid request"}, status=400)
+    try:
+        name = request.POST.get("name")
+        price = request.POST.get("price")
+        description = request.POST.get("description")
+        thumbnail = request.POST.get("thumbnail")  # URL string
+        category = request.POST.get("category")
+        brand = request.POST.get("brand")
+        stock = request.POST.get("stock")
+        is_featured = request.POST.get("is_featured") == "true"
 
-    name = request.POST.get("name")
-    price = request.POST.get("price")
-    description = request.POST.get("description")
-    thumbnail = request.POST.get("thumbnail")
-    category = request.POST.get("category")
-    brand = request.POST.get("brand")
-    stock = request.POST.get("stock")
-    is_featured = request.POST.get("is_featured") == "true"
+        product = Product.objects.create(
+            user=request.user,
+            name=name,
+            price=price,
+            description=description,
+            thumbnail=thumbnail,  # langsung simpan string URL
+            category=category,
+            brand=brand,
+            stock=stock,
+            is_featured=is_featured,
+        )
 
-    product = Product.objects.create(
-        user=request.user,
-        name=name,
-        price=price,
-        description=description,
-        thumbnail=thumbnail,
-        category=category,
-        brand=brand,
-        stock=stock,
-        is_featured=is_featured,
-    )
-
-    return JsonResponse({
-        "id": str(product.id),
-        "name": product.name,
-        "price": product.price,
-        "description": product.description,
-        "thumbnail": product.thumbnail,
-        "category": product.category,
-        "brand": product.brand,
-        "stock": product.stock,
-        "is_featured": product.is_featured,
-    })
-
+        return JsonResponse({
+            "status": "success",
+            "id": str(product.id),
+            "name": product.name,
+            "price": product.price,
+            "description": product.description,
+            "thumbnail": product.thumbnail,  # langsung string
+            "category": product.category,
+            "brand": product.brand,
+            "stock": product.stock,
+            "is_featured": product.is_featured,
+        })
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
 
 @login_required(login_url="/login")
 def edit_product(request, id):
@@ -120,54 +120,53 @@ def edit_product(request, id):
         form = ProductForm(instance=product)
     return render(request, "edit_product.html", {"form": form, "product": product})
 
-@login_required(login_url='/login')
+@login_required
 @require_POST
 def edit_product_ajax(request, id):
-    if not request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return JsonResponse({"error": "Invalid request"}, status=400)
+    try:
+        product = Product.objects.get(id=id, user=request.user)
 
-    product = get_object_or_404(Product, pk=id, user=request.user)
+        # Update field biasa
+        product.name = request.POST.get("name")
+        product.price = request.POST.get("price")
+        product.description = request.POST.get("description")
+        product.category = request.POST.get("category")
+        product.brand = request.POST.get("brand")
+        product.stock = request.POST.get("stock")
+        product.is_featured = request.POST.get("is_featured") == "true"
 
-    name = request.POST.get("name")
-    price = request.POST.get("price")
-    description = request.POST.get("description")
-    category = request.POST.get("category")
-    brand = request.POST.get("brand")
-    stock = request.POST.get("stock")
-    is_featured = request.POST.get("is_featured", "false") == "true"
-    thumbnail = request.POST.get("thumbnail")  # <-- ambil dari POST, bukan FILES
+        if "thumbnail" in request.FILES:
+            product.thumbnail = request.FILES["thumbnail"]
+        else:
+            product.thumbnail = product.thumbnail
 
-    if not name or not price or not description:
-        return JsonResponse({"error": "Invalid form data"}, status=400)
+        product.save()
 
-    product.name = name
-    product.price = price
-    product.description = description
-    product.category = category
-    product.brand = brand
-    product.stock = stock
-    product.is_featured = is_featured
+        return JsonResponse({
+    "status": "success",
+    "message": "Product updated successfully",
+    "product": {
+        "id": str(product.id),
+        "name": product.name,
+        "price": product.price,
+        "description": product.description,
+        "thumbnail": (
+            product.thumbnail.url
+            if hasattr(product.thumbnail, "url")
+            else product.thumbnail or ""
+        ),
+        "category": product.category,
+        "brand": product.brand,
+        "stock": product.stock,
+        "is_featured": product.is_featured,
+    }
+})
 
-    if thumbnail:
-        product.thumbnail = thumbnail
+    except Product.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Product not found."})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)})
 
-    product.save()
-
-    return JsonResponse({
-        "status": "success",
-        "message": "Product updated successfully",
-        "product": {
-            "id": str(product.id),
-            "name": product.name,
-            "price": product.price,
-            "description": product.description,
-            "thumbnail": product.thumbnail or "",
-            "category": product.category,
-            "brand": product.brand,
-            "stock": product.stock,
-            "is_featured": product.is_featured,
-        }
-    })
 
 # ======================
 # DELETE PRODUCT (AJAX)

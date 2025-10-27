@@ -33,11 +33,36 @@
 
   <!-- Auto Trigger Toast dari Django messages -->
   {% if messages %}
-  <script>
+    <!-- data messages sebagai JSON -->
+    <script id="toast-data" type="application/json">
+    [
     {% for message in messages %}
-      showToast("{{ message.tags|title }}", "{{ message|escapejs }}", "{{ message.tags }}");
+      {
+        "title": "{{ message.tags|title|escapejs }}",
+        "text": "{{ message|escapejs }}",
+        "tags": "{{ message.tags|escapejs }}"
+      }{% if not forloop.last %},{% endif %}
     {% endfor %}
-  </script>
+    ]
+    </script>
+
+    <script>
+      (function () {
+        const el = document.getElementById('toast-data');
+        if (!el) return;
+        try {
+          const data = JSON.parse(el.textContent || '[]');
+          data.forEach(m => {
+            const cleanText = (window.DOMPurify && typeof DOMPurify.sanitize === 'function')
+              ? DOMPurify.sanitize(m.text)
+              : m.text;
+            showToast(m.title, cleanText, m.tags);
+          });
+        } catch (e) {
+          console.error('Failed to parse toast data:', e);
+        }
+      })();
+    </script>
   {% endif %}
 
 </body>

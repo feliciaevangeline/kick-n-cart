@@ -1,39 +1,47 @@
 {% load static %}
-<article class="bg-white rounded-xl border border-gray-200 hover:shadow-2xl hover:border-[#E59D2C] transition overflow-hidden"
+{% load humanize %}
+
+<article
+  class="bg-white rounded-xl border border-gray-200 hover:shadow-2xl hover:border-[#E59D2C] transition overflow-hidden"
   data-product-id="{{ product.id }}"
   data-name="{{ product.name|escapejs }}"
-  data-price="{{ product.price }}"
-  data-description="{{ product.description|escapejs }}"
-  data-thumbnail="{{ product.thumbnail|escapejs }}"
+  data-price="{{ product.price|floatformat:0 }}"
+  data-description="{{ product.description|default:''|escapejs }}"
+  data-thumbnail="{{ product.thumbnail|default:''|escapejs }}"
   data-brand="{{ product.brand|default:''|escapejs }}"
   data-stock="{{ product.stock|default:0 }}"
   data-category="{{ product.category|default:''|escapejs }}"
-  data-is-featured="{% if product.is_featured %}true{% else %}false{% endif %}">
+  data-is-featured="{% if product.is_featured %}true{% else %}false{% endif %}"
+>
 
   <!-- Thumbnail -->
   <div class="aspect-[16/9] relative overflow-hidden group">
     {% if product.thumbnail %}
-      <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
-      <button onclick="openModal('{{ product.thumbnail }}')" 
-        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        View Image
-      </button>
+      <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105">
+
+      <!-- Overlay -->
+      <div
+        class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20 cursor-pointer"
+        onclick="openModal('{{ product.thumbnail }}')"
+      >
+        <span class="text-white text-sm font-medium select-none">View Image</span>
+      </div>
     {% else %}
-      <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">No Image</div>
+      <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+        No Image
+      </div>
     {% endif %}
 
-    <!-- Category -->
     {% if product.category %}
-    <div class="absolute top-3 left-3">
-      <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold bg-[#2E4365] text-white shadow-md">
-        {{ product.category }}
-      </span>
-    </div>
+      <div class="absolute top-3 left-3 z-30">
+        <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold bg-[#2E4365] text-white shadow-md">
+          {{ product.category }}
+        </span>
+      </div>
     {% endif %}
 
-    <!-- Featured -->
     {% if product.is_featured %}
-      <div class="absolute top-3 right-3">
+      <div class="absolute top-3 right-3 z-30">
         <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-[#E59D2C] text-white shadow">
           ⭐ Featured
         </span>
@@ -44,7 +52,9 @@
   <!-- Content -->
   <div class="p-6">
     <div class="flex items-center text-xs text-gray-500 mb-2">
-      <time datetime="{{ product.created_at|date:'c' }}">{{ product.created_at|date:"M j, Y" }}</time>
+      <time datetime="{{ product.created_at|date:'c' }}">
+        {{ product.created_at|date:"M j, Y" }}
+      </time>
     </div>
 
     <h3 class="text-xl font-bold text-[#2E4365] mb-2 leading-snug">
@@ -53,8 +63,13 @@
       </a>
     </h3>
 
-    <p class="text-lg font-semibold text-[#228B22] mb-3">Rp {{ product.price }}</p>
-    <p class="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-4">{{ product.description|truncatewords:15 }}</p>
+    <p class="text-lg font-semibold text-[#228B22] mb-3">
+      Rp {{ product.price|floatformat:0|intcomma }}
+    </p>
+
+    <p class="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-4">
+      {{ product.description|default:"Tidak ada deskripsi"|truncatewords:15 }}
+    </p>
 
     {% if user.is_authenticated and product.user == user %}
       <div class="flex items-center justify-between pt-4 border-t border-gray-200">
@@ -62,10 +77,8 @@
           View
         </a>
         <div class="flex space-x-2">
-          <button onclick="openEditModalFromButton(this)"
-            class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm transition">Edit</button>
-          <button onclick="deleteProduct('{{ product.id }}', this)"
-            class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm transition">Delete</button>
+          <button onclick="openEditModalFromButton(this)" class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm transition">Edit</button>
+          <button onclick="deleteProduct('{{ product.id }}', this)" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm transition">Delete</button>
         </div>
       </div>
     {% else %}
@@ -77,3 +90,41 @@
     {% endif %}
   </div>
 </article>
+
+<!-- Modal image viewer -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-[9999] p-4 transition-opacity duration-300">
+  <div class="relative inline-block transform scale-95 opacity-0 transition-all duration-300" id="imageContainer">
+    <img id="modalImage" src="" alt="Product Image" class="max-h-[90vh] max-w-[90vw] rounded-lg shadow-lg">
+    <button onclick="closeModal()"
+      class="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-lg rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-80 transition">
+      &times;
+    </button>
+  </div>
+</div>
+
+<script>
+  function openModal(src) {
+    const modal = document.getElementById("imageModal");
+    const container = document.getElementById("imageContainer");
+    const img = document.getElementById("modalImage");
+    img.src = src;
+    modal.classList.remove("hidden");
+    setTimeout(() => {
+      container.classList.remove("scale-95", "opacity-0");
+      container.classList.add("scale-100", "opacity-100");
+    }, 10);
+  }
+
+  function closeModal() {
+    const modal = document.getElementById("imageModal");
+    const container = document.getElementById("imageContainer");
+    container.classList.add("scale-95", "opacity-0");
+    setTimeout(() => {
+      modal.classList.add("hidden");
+    }, 200);
+  }
+
+  document.getElementById("imageModal").addEventListener("click", (e) => {
+    if (e.target.id === "imageModal") closeModal();
+  });
+</script>

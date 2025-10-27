@@ -179,17 +179,38 @@ async function submitAddProduct(e) {
   const form = document.getElementById('addProductForm');
   const formData = new FormData(form);
   try {
-    const res = await fetch("{% url 'main:add_product_entry_ajax' %}", {
+    const res = await fetch(`/create-product-ajax/`, {
       method: "POST",
-      headers: {"X-Requested-With": "XMLHttpRequest"},
+      headers: {
+        "X-CSRFToken": getCSRFToken(),
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      credentials: "same-origin", 
       body: formData
     });
-    const data = await res.json();
-    if (!res.ok || data.status === "error") throw new Error();
+
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error("Non-JSON response from create-product-ajax:", text);
+      throw new Error("Server error");
+    }
+
+    if (!res.ok || data.status === "error") throw new Error(data.message || "Failed");
+
     closeAddModal();
     showToast("Success", "Product added successfully!", "success");
-    location.reload();
-  } catch {
+
+    if (typeof addProductCard === "function") {
+      addProductCard(data);
+    } else {
+      // fallback
+      setTimeout(() => location.reload(), 300);
+    }
+  } catch (err) {
+    console.error("submitAddProduct error:", err);
     showToast("Error", "Failed to add product.", "error");
   }
 }
@@ -201,15 +222,17 @@ async function submitEditProduct(e) {
   const form = document.getElementById("editProductForm");
   const formData = new FormData(form);
 
+  formData.set("is_featured", document.getElementById("edit-is-featured").checked ? "true" : "false");
+
   try {
-    const res = await fetch(`/product/${id}/edit/`, {
+    const res = await fetch(`/product/${id}/edit/ajax/`, {  // ✅ FIXED
       method: "POST",
       headers: {
         "X-CSRFToken": getCSRFToken(),
-        "X-Requested-With": "XMLHttpRequest"
+        "X-Requested-With": "XMLHttpRequest",
       },
       credentials: "same-origin",
-      body: formData
+      body: formData,
     });
 
     const data = await res.json();
@@ -242,6 +265,97 @@ async function deleteProduct(id, btn) {
   } catch (err) {
     showToast("Error", err.message || "Failed to delete product.", "error");
   }
+}
+
+// === VIEW IMAGE HANDLER ===
+document.addEventListener("click", function (e) {
+  if (e.target.matches(".view-image-btn")) {
+    const article = e.target.closest("[data-product-id]");
+    const imageUrl = article ? article.dataset.thumbnail : null;
+    if (imageUrl) {
+      // Buat modal untuk preview gambar
+      const modal = document.createElement("div");
+      modal.className =
+        "fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 animate-fadeIn";
+      modal.innerHTML = `
+        <div class="relative bg-white rounded-lg overflow-hidden shadow-lg max-w-2xl">
+          <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-bold">&times;</button>
+          <img src="${imageUrl}" alt="Product Image" class="max-h-[80vh] object-contain">
+        </div>
+      `;
+      document.body.appendChild(modal);
+      // Tutup modal saat klik di luar / tombol close
+      modal.addEventListener("click", (ev) => {
+        if (ev.target === modal || ev.target.matches("button")) modal.remove();
+      });
+    } else {
+      showToast("Error", "No image found for this product.", "error");
+    }
+  }
+});
+
+function addProductCard(data) {
+  const grid = document.getElementById("product-grid");
+  // Jika belum ada grid (mis: sebelumnya kosong), tambahkan container
+  if (!grid) {
+    const section = document.getElementById("product-section");
+    const container = document.createElement("div");
+    container.id = "product-grid";
+    container.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+    section.innerHTML = ""; // hapus empty state
+    section.appendChild(container);
+  }
+  const targetGrid = document.getElementById("product-grid");
+
+  const article = document.createElement("article");
+  article.className = "bg-white rounded-xl border border-gray-200 hover:shadow-2xl hover:border-[#E59D2C] transition overflow-hidden";
+  article.setAttribute("data-product-id", data.id);
+  article.setAttribute("data-name", (data.name||"").replace(/"/g,'&quot;'));
+  article.setAttribute("data-price", data.price || 0);
+  article.setAttribute("data-description", (data.description||"").replace(/"/g,'&quot;'));
+  article.setAttribute("data-thumbnail", data.thumbnail || "");
+  article.setAttribute("data-category", data.category || "");
+  article.setAttribute("data-brand", data.brand || "");
+  article.setAttribute("data-stock", data.stock || 0);
+  article.setAttribute("data-is-featured", data.is_featured ? "true" : "false");
+
+  // Build inner html 
+  article.innerHTML = `
+    <div class="aspect-[16/9] relative overflow-hidden group">
+      <img src="${data.thumbnail || '/static/image/no-product.png'}"
+           alt="${(data.name||'Product').replace(/"/g,'&quot;')}"
+           class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+           onerror='this.onerror=null;this.src="{% static "image/no-product.png" %}";'>
+      <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20 cursor-pointer"
+           onclick="openModal('${(data.thumbnail||'').replace(/'/g,'\\\'')}', '${data.id}')">
+        <span class="text-white text-sm font-medium select-none">View Image</span>
+      </div>
+    </div>
+
+    <div class="p-6">
+      <div class="flex items-center text-xs text-gray-500 mb-2">
+        <time>${new Date().toLocaleDateString()}</time>
+      </div>
+
+      <h3 class="text-xl font-bold text-[#2E4365] mb-2 leading-snug">
+        <a href="/product/${data.id}/" class="hover:text-[#E59D2C] transition-colors">${data.name}</a>
+      </h3>
+
+      <p class="text-lg font-semibold text-[#228B22] mb-3">Rp ${data.price}</p>
+      <p class="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-4">${(data.description||'').substring(0,120)}</p>
+
+      <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+        <a href="/product/${data.id}/" class="px-4 py-2 bg-[#E59D2C] text-white rounded-md hover:bg-[#C97C1F] text-sm transition">View</a>
+        <div class="flex space-x-2">
+          <button onclick="openEditModalFromButton(this)" class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm transition">Edit</button>
+          <button onclick="deleteProduct('${data.id}', this)" class="px-3 py-1.5 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm transition">Delete</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // prepend supaya muncul paling atas
+  targetGrid.prepend(article);
 }
 </script>
 
