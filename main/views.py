@@ -11,6 +11,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 import datetime
+import requests
+import json
 
 from .models import Product
 from .forms import ProductForm
@@ -251,3 +253,116 @@ def logout_user(request):
     response.delete_cookie('last_login')
     messages.success(request, "Logout successful!")
     return response
+
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+    
+@csrf_exempt
+def create_product_flutter(request):
+    """
+    Menerima POST JSON dari Flutter untuk membuat Product baru
+    yang terasosiasi dengan user yang sedang login.
+    """
+    if request.method == 'POST':
+        # Pastikan user sudah login (CookieRequest Django)
+        if not request.user.is_authenticated:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "User must be authenticated to create a product.",
+                },
+                status=401,
+            )
+
+        try:
+            data = json.loads(request.body)
+
+            name = strip_tags(data.get("name", ""))
+            description = strip_tags(data.get("description", ""))
+
+            price = data.get("price", 0)
+            stock = data.get("stock", 0)
+
+            # Konversi price & stock ke int
+            try:
+                price = int(price)
+            except (ValueError, TypeError):
+                price = 0
+
+            try:
+                stock = int(stock)
+            except (ValueError, TypeError):
+                stock = 0
+
+            thumbnail = data.get("thumbnail", "")
+            category = data.get("category", "")
+            is_featured = data.get("is_featured", False)
+            brand = data.get("brand", "")
+
+            new_product = Product(
+                user=request.user,
+                name=name,
+                price=price,
+                description=description,
+                thumbnail=thumbnail,
+                category=category,
+                is_featured=is_featured,
+                stock=stock,
+                brand=brand,
+            )
+            new_product.save()
+
+            return JsonResponse(
+                {
+                    "status": "success",
+                    "message": "Product created successfully.",
+                },
+                status=200,
+            )
+
+        except json.JSONDecodeError:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": "Invalid JSON payload.",
+                },
+                status=400,
+            )
+
+    # Kalau bukan POST
+    return JsonResponse(
+        {
+            "status": "error",
+            "message": "Only POST method is allowed.",
+        },
+        status=405,
+    )
+
+
+@login_required(login_url="/login/")
+def show_json(request):
+    """
+    Endpoint JSON yang hanya mengembalikan produk
+    milik user yang sedang login (filter per user).
+    Dipakai oleh Flutter di /json/.
+    """
+    data = Product.objects.filter(user=request.user)
+    return HttpResponse(
+        serializers.serialize("json", data),
+        content_type="application/json",
+    )

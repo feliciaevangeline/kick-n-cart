@@ -7,7 +7,9 @@ from .views import (
     show_xml, show_xml_by_id,
     register, login_user, logout_user,
     edit_product, delete_product,
-    add_product_entry_ajax, edit_product_ajax
+    add_product_entry_ajax, edit_product_ajax,
+    proxy_image,
+    create_product_flutter,
 )
 
 app_name = 'main'
@@ -38,4 +40,7 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
+
+    path('proxy-image/', proxy_image, name='proxy_image'),
+    path('create-product-flutter/', create_product_flutter, name='create_product_flutter'),
 ]
